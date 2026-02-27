@@ -6,7 +6,7 @@ import { computeIntervalStatuses, getRegattaMaintenanceFlags } from "@/lib/logic
 import { loadLocalCache, saveLocalCache } from "@/lib/local-cache";
 import { fetchRemoteState, saveRemoteState } from "@/lib/remote";
 import { defaultState } from "@/lib/seed";
-import { AppState, CrewStatus, RegattaItem, TodoCategory } from "@/lib/types";
+import { AppState, CrewStatus, RegattaItem, TodoCategory, TodoItem } from "@/lib/types";
 import { WeatherDay } from "@/lib/weather";
 import { addDays, todayIso, uid } from "@/lib/utils";
 
@@ -115,6 +115,12 @@ export default function Page() {
   const [authError, setAuthError] = useState("");
   const [manualQuery, setManualQuery] = useState("");
   const [selectedManual, setSelectedManual] = useState("");
+  const [svcSystem, setSvcSystem] = useState("Engine");
+  const [svcTask, setSvcTask] = useState("");
+  const [svcDueDays, setSvcDueDays] = useState("");
+  const [svcDueHours, setSvcDueHours] = useState("");
+  const [svcLastDate, setSvcLastDate] = useState("");
+  const [svcLastHours, setSvcLastHours] = useState("");
   const [prospectName, setProspectName] = useState("");
   const [prospectEmail, setProspectEmail] = useState("");
   const [prospectPhone, setProspectPhone] = useState("");
@@ -435,39 +441,40 @@ export default function Page() {
                   <div className={`chip ${s.status}`}>{s.status.toUpperCase()}</div>
                   <h4>{s.interval.system}: {s.interval.task}</h4>
                   <p className="muted">{s.message || "No schedule details."}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {tab === "To-Do" && (
-        <section className="grid two-col">
-          <div className="panel">
-            <h2>Project To-Dos</h2>
-            {!isEditor && <div className="chip due">Read-only mode.</div>}
-            <div className="list">
-              {state.todos.map((t) => (
-                <div key={t.id} className="item">
-                  <strong>{t.title}</strong>
-                  <p>{t.category} | Due: {t.dueDate ?? "n/a"}</p>
-                  <p>{t.notes}</p>
+                  <p className="muted">Every {s.interval.dueEveryDays ?? "n/a"} days | {s.interval.dueEveryHours ?? "n/a"} hrs</p>
+                  <p className="muted">Last done: {s.interval.lastDoneDate ?? "n/a"} | {s.interval.lastDoneHours ?? "n/a"} hrs</p>
                   <div className="row">
-                    <button onClick={() => guardedSetState(() => setState({ ...state, todos: state.todos.map((x) => x.id === t.id ? { ...x, done: !x.done } : x) }))}>
-                      {t.done ? "Mark Open" : "Mark Done"}
-                    </button>
                     <button
                       className="secondary"
                       onClick={() =>
                         guardedSetState(() => {
-                          const title = window.prompt("Edit title", t.title);
-                          if (title === null) return;
-                          const notes = window.prompt("Edit notes", t.notes);
-                          if (notes === null) return;
+                          const system = window.prompt("System", s.interval.system);
+                          if (system === null) return;
+                          const task = window.prompt("Task", s.interval.task);
+                          if (task === null) return;
+                          const dueDaysRaw = window.prompt("Due every days (blank for none)", s.interval.dueEveryDays?.toString() ?? "");
+                          if (dueDaysRaw === null) return;
+                          const dueHoursRaw = window.prompt("Due every hours (blank for none)", s.interval.dueEveryHours?.toString() ?? "");
+                          if (dueHoursRaw === null) return;
+                          const lastDoneDate = window.prompt("Last done date YYYY-MM-DD (blank for none)", s.interval.lastDoneDate ?? "");
+                          if (lastDoneDate === null) return;
+                          const lastDoneHoursRaw = window.prompt("Last done engine hours (blank for none)", s.interval.lastDoneHours?.toString() ?? "");
+                          if (lastDoneHoursRaw === null) return;
                           setState({
                             ...state,
-                            todos: state.todos.map((x) => (x.id === t.id ? { ...x, title, notes } : x))
+                            serviceIntervals: state.serviceIntervals.map((x) =>
+                              x.id === s.interval.id
+                                ? {
+                                    ...x,
+                                    system: system.trim() || x.system,
+                                    task: task.trim() || x.task,
+                                    dueEveryDays: dueDaysRaw.trim() ? Number(dueDaysRaw) : null,
+                                    dueEveryHours: dueHoursRaw.trim() ? Number(dueHoursRaw) : null,
+                                    lastDoneDate: lastDoneDate.trim() || null,
+                                    lastDoneHours: lastDoneHoursRaw.trim() ? Number(lastDoneHoursRaw) : null
+                                  }
+                                : x
+                            )
                           });
                         })
                       }
@@ -480,7 +487,7 @@ export default function Page() {
                         guardedSetState(() =>
                           setState({
                             ...state,
-                            todos: state.todos.filter((x) => x.id !== t.id)
+                            serviceIntervals: state.serviceIntervals.filter((x) => x.id !== s.interval.id)
                           })
                         )
                       }
@@ -489,6 +496,67 @@ export default function Page() {
                     </button>
                   </div>
                 </div>
+              ))}
+            </div>
+            <div className="item" style={{ marginTop: "0.6rem" }}>
+              <h3>Add Service Timeline</h3>
+              <div className="stack">
+                <div><label>System</label><input value={svcSystem} onChange={(e) => setSvcSystem(e.target.value)} /></div>
+                <div><label>Task</label><input value={svcTask} onChange={(e) => setSvcTask(e.target.value)} /></div>
+                <div><label>Due Every (days)</label><input type="number" value={svcDueDays} onChange={(e) => setSvcDueDays(e.target.value)} /></div>
+                <div><label>Due Every (hours)</label><input type="number" value={svcDueHours} onChange={(e) => setSvcDueHours(e.target.value)} /></div>
+                <div><label>Last Done Date</label><input type="date" value={svcLastDate} onChange={(e) => setSvcLastDate(e.target.value)} /></div>
+                <div><label>Last Done Hours</label><input type="number" value={svcLastHours} onChange={(e) => setSvcLastHours(e.target.value)} /></div>
+                <button
+                  onClick={() =>
+                    guardedSetState(() => {
+                      if (!svcTask.trim()) return;
+                      setState({
+                        ...state,
+                        serviceIntervals: [
+                          ...state.serviceIntervals,
+                          {
+                            id: uid(),
+                            system: svcSystem.trim() || "General",
+                            task: svcTask.trim(),
+                            dueEveryDays: svcDueDays.trim() ? Number(svcDueDays) : null,
+                            dueEveryHours: svcDueHours.trim() ? Number(svcDueHours) : null,
+                            lastDoneDate: svcLastDate || null,
+                            lastDoneHours: svcLastHours.trim() ? Number(svcLastHours) : null
+                          }
+                        ]
+                      });
+                      setSvcTask("");
+                      setSvcDueDays("");
+                      setSvcDueHours("");
+                      setSvcLastDate("");
+                      setSvcLastHours("");
+                    })
+                  }
+                >
+                  Add Timeline
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {tab === "To-Do" && (
+        <section className="grid two-col">
+          <div className="panel">
+            <h2>Project To-Dos</h2>
+            {!isEditor && <div className="chip due">Read-only mode.</div>}
+            <div className="list">
+              {state.todos.map((t) => (
+                <TodoItemCard
+                  key={t.id}
+                  t={t}
+                  state={state}
+                  setState={setState}
+                  categories={categories}
+                  guardedSetState={guardedSetState}
+                />
               ))}
             </div>
           </div>
@@ -645,11 +713,155 @@ function SimpleLogPanel({ state, setState, guardedSetState }: { state: AppState;
               <strong>{l.date} | {l.system}</strong>
               <p>{l.task}</p>
               <p className="muted">Hours: {l.engineHours ?? "n/a"}</p>
+              <p className="muted">{l.notes || "No notes"}</p>
+              <div className="row">
+                <button
+                  className="secondary"
+                  onClick={() =>
+                    guardedSetState(() => {
+                      const dateValue = window.prompt("Date (YYYY-MM-DD)", l.date);
+                      if (dateValue === null) return;
+                      const systemValue = window.prompt("System", l.system);
+                      if (systemValue === null) return;
+                      const taskValue = window.prompt("Task", l.task);
+                      if (taskValue === null) return;
+                      const hoursValue = window.prompt("Engine hours (blank for none)", l.engineHours?.toString() ?? "");
+                      if (hoursValue === null) return;
+                      const notesValue = window.prompt("Notes", l.notes ?? "");
+                      if (notesValue === null) return;
+                      setState({
+                        ...state,
+                        maintenanceLogs: state.maintenanceLogs.map((x) =>
+                          x.id === l.id
+                            ? {
+                                ...x,
+                                date: dateValue.trim() || x.date,
+                                system: systemValue.trim() || x.system,
+                                task: taskValue.trim() || x.task,
+                                engineHours: hoursValue.trim() ? Number(hoursValue) : null,
+                                notes: notesValue
+                              }
+                            : x
+                        )
+                      });
+                    })
+                  }
+                >
+                  Edit
+                </button>
+                <button
+                  className="secondary"
+                  onClick={() =>
+                    guardedSetState(() =>
+                      setState({
+                        ...state,
+                        maintenanceLogs: state.maintenanceLogs.filter((x) => x.id !== l.id)
+                      })
+                    )
+                  }
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </>
+  );
+}
+
+function TodoItemCard({
+  t,
+  state,
+  setState,
+  categories,
+  guardedSetState
+}: {
+  t: TodoItem;
+  state: AppState;
+  setState: (v: AppState) => void;
+  categories: TodoCategory[];
+  guardedSetState: (cb: () => void) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(t.title);
+  const [editCategory, setEditCategory] = useState<TodoCategory>(t.category);
+  const [editDueDate, setEditDueDate] = useState(t.dueDate ?? "");
+  const [editNotes, setEditNotes] = useState(t.notes);
+
+  return (
+    <div className="item">
+      <strong>{t.title}</strong>
+      <p>{t.category} | Due: {t.dueDate ?? "n/a"}</p>
+      <p>{t.notes}</p>
+      {editing && (
+        <div className="stack" style={{ margin: "0.4rem 0" }}>
+          <div><label>Title</label><input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} /></div>
+          <div><label>Category</label><select value={editCategory} onChange={(e) => setEditCategory(e.target.value as TodoCategory)}>{categories.map((c) => <option key={c}>{c}</option>)}</select></div>
+          <div><label>Due Date</label><input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} /></div>
+          <div><label>Notes</label><textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} /></div>
+        </div>
+      )}
+      <div className="row">
+        <button onClick={() => guardedSetState(() => setState({ ...state, todos: state.todos.map((x) => x.id === t.id ? { ...x, done: !x.done } : x) }))}>
+          {t.done ? "Mark Open" : "Mark Done"}
+        </button>
+        {!editing && (
+          <button className="secondary" onClick={() => setEditing(true)}>
+            Edit
+          </button>
+        )}
+        {editing && (
+          <button
+            className="secondary"
+            onClick={() =>
+              guardedSetState(() => {
+                if (!editTitle.trim()) return;
+                setState({
+                  ...state,
+                  todos: state.todos.map((x) =>
+                    x.id === t.id
+                      ? { ...x, title: editTitle.trim(), category: editCategory, dueDate: editDueDate || null, notes: editNotes }
+                      : x
+                  )
+                });
+                setEditing(false);
+              })
+            }
+          >
+            Save
+          </button>
+        )}
+        {editing && (
+          <button
+            className="secondary"
+            onClick={() => {
+              setEditTitle(t.title);
+              setEditCategory(t.category);
+              setEditDueDate(t.dueDate ?? "");
+              setEditNotes(t.notes);
+              setEditing(false);
+            }}
+          >
+            Cancel
+          </button>
+        )}
+        <button
+          className="secondary"
+          onClick={() =>
+            guardedSetState(() =>
+              setState({
+                ...state,
+                todos: state.todos.filter((x) => x.id !== t.id)
+              })
+            )
+          }
+        >
+          Delete
+        </button>
+      </div>
+    </div>
   );
 }
 

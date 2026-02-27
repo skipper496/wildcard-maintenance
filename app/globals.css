@@ -308,6 +308,7 @@ button.ghost {
   width: 171px;
   height: 110px;
   object-fit: contain;
+  transform: translateX(-8px);
 }
 
 .table-wrap {
