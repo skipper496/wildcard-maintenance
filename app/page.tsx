@@ -18,6 +18,25 @@ const EDIT_PASSWORD = "496";
 
 type CalendarEvent = { label: string; kind: "regatta" | "service" | "todo" };
 
+function ensureMaxOnFirstAprilRegatta(regattas: RegattaItem[]): RegattaItem[] {
+  const april = regattas
+    .filter((r) => {
+      const d = new Date(r.date + "T00:00:00");
+      return d.getMonth() === 3;
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (april.length === 0) return regattas;
+  const targetId = april[0].id;
+
+  return regattas.map((r) => {
+    if (r.id !== targetId) return r;
+    const hasMax = r.crew.some((c) => c.name.trim().toLowerCase() === "max");
+    if (hasMax) return r;
+    return { ...r, crew: [...r.crew, { id: uid(), name: "Max", status: "Confirmed" }] };
+  });
+}
+
 function normalizeState(raw: Partial<AppState> | null | undefined): AppState {
   const base = raw ?? {};
   const manualIds = new Set(defaultState.manuals.map((m) => m.id));
@@ -38,12 +57,12 @@ function normalizeState(raw: Partial<AppState> | null | undefined): AppState {
     todos: Array.from(todoById.values()),
     manuals: persistedManuals.length === defaultState.manuals.length ? persistedManuals : defaultState.manuals,
     specs: base.specs ?? defaultState.specs,
-    regattas: (base.regattas ?? defaultState.regattas).map((r: any) => ({
+    regattas: ensureMaxOnFirstAprilRegatta((base.regattas ?? defaultState.regattas).map((r: any) => ({
       ...r,
       websiteUrl: r.websiteUrl ?? "",
       registered: Boolean(r.registered),
       crew: r.crew ?? []
-    })),
+    }))),
     boatWeights: base.boatWeights ?? []
   };
 }
