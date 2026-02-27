@@ -34,11 +34,12 @@ a {
 }
 
 .top {
-  background: linear-gradient(120deg, #0f4d63, #147ca1);
-  color: white;
+  background: linear-gradient(120deg, #f7f8f4, #eef1ec);
+  color: #1b2a35;
   border-radius: 14px;
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
+  border: 1px solid #d8e1d9;
 }
 
 .top h1 {
@@ -61,7 +62,7 @@ a {
 .login-box {
   margin-top: 0.75rem;
   padding-top: 0.6rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  border-top: 1px solid #ced8cf;
   display: grid;
   gap: 0.4rem;
 }
@@ -304,8 +305,8 @@ button.ghost {
   background: transparent;
   border: 0;
   padding: 0;
-  width: 114px;
-  height: 73px;
+  width: 171px;
+  height: 110px;
   object-fit: contain;
 }
 

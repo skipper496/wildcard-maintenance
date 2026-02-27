@@ -245,7 +245,6 @@ export default function Page() {
             <h1>Wildcard J/105 #496</h1>
           </div>
           <div className="row">
-            <img className="brand-mark whiteify" src="/assets/j105-logo-color.png" alt="J/105 logo" />
             <img className="brand-mark burgee-mark" src="/assets/stfyc-burgee.png" alt="StFYC burgee" />
             <button
               className={isEditor ? "secondary" : ""}
