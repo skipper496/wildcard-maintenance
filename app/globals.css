@@ -280,8 +280,9 @@ button.ghost {
 }
 
 .brand-mark {
-  height: 42px;
-  width: auto;
+  height: 48px;
+  width: 72px;
+  object-fit: contain;
   background: white;
   border-radius: 8px;
   padding: 4px;
@@ -292,6 +293,10 @@ button.ghost {
   filter: brightness(0) invert(1);
   background: transparent;
   border-color: rgba(255, 255, 255, 0.4);
+  width: 96px;
+  height: 56px;
+  object-fit: cover;
+  padding: 0;
 }
 
 .table-wrap {

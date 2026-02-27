@@ -269,7 +269,6 @@ export default function Page() {
         <div className="row">
           <span className={`chip ${syncMode === "cloud" ? "upcoming" : "due"}`}>{syncMode === "cloud" ? "Cloud Sync" : "Local Mode"}</span>
           <span className={`chip ${saveStatus === "saving" ? "due" : "upcoming"}`}>{saveStatus === "saving" ? "Saving" : "Saved"}</span>
-          {syncNote && <span className="muted">{syncNote}</span>}
         </div>
       </section>
 
