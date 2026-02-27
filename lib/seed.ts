@@ -93,10 +93,31 @@ export const defaultState: AppState = {
   ],
   manuals: [
     {
+      id: "man-ygm20f-owner",
+      title: "Yanmar YGM20F Owner's Manual (GM Series)",
+      type: "Owner's manual",
+      viewerUrl:
+        "https://www.yanmar.no/wp-content/uploads/2019/10/0AGMS-G00100_1GM10_2GM20_3GM30_Operation_Manual.pdf",
+      sourceUrl:
+        "https://www.yanmar.no/wp-content/uploads/2019/10/0AGMS-G00100_1GM10_2GM20_3GM30_Operation_Manual.pdf",
+      tags: ["yanmar", "ygm20f", "owner", "operation"],
+      source: "Yanmar official document mirror"
+    },
+    {
+      id: "man-ygm20f-service",
+      title: "Yanmar GM Service Manual (includes 2GM20 family)",
+      type: "Service manual",
+      viewerUrl: "https://www.yumpu.com/da/embed/view/sPPNEAH7ak1Gke7p",
+      sourceUrl: "https://www.yumpu.com/en/document/view/32590325/yanmar-gm-series-service-manual",
+      tags: ["yanmar", "ygm20f", "service", "workshop"],
+      source: "Yumpu document archive"
+    },
+    {
       id: "man-yanmar-marine-support",
       title: "Yanmar Marine Support",
       type: "Official support",
-      url: "https://www.yanmar.com/marine/support/",
+      viewerUrl: "https://www.yanmar.com/marine/support/",
+      sourceUrl: "https://www.yanmar.com/marine/support/",
       tags: ["yanmar", "support", "parts", "dealer"],
       source: "Yanmar Marine"
     },
@@ -104,7 +125,8 @@ export const defaultState: AppState = {
       id: "man-yanmar-operation-manuals",
       title: "Yanmar Marine Operation Manuals",
       type: "Official manuals portal",
-      url: "https://www.yanmar.com/marine/support/operation_manuals/",
+      viewerUrl: "https://www.yanmar.com/marine/support/operation_manuals/",
+      sourceUrl: "https://www.yanmar.com/marine/support/operation_manuals/",
       tags: ["yanmar", "operation manual", "engine"],
       source: "Yanmar Marine"
     },
@@ -112,7 +134,8 @@ export const defaultState: AppState = {
       id: "man-yanmar-dealer-locator",
       title: "Yanmar Dealer Locator",
       type: "Official dealer network",
-      url: "https://www.yanmar.com/marine/support/dealer_locator/",
+      viewerUrl: "https://www.yanmar.com/marine/support/dealer_locator/",
+      sourceUrl: "https://www.yanmar.com/marine/support/dealer_locator/",
       tags: ["yanmar", "dealer", "service manual request"],
       source: "Yanmar Marine"
     },
@@ -120,7 +143,8 @@ export const defaultState: AppState = {
       id: "man-j105-class-rules",
       title: "J/105 Class Rules and Documents",
       type: "Class documentation",
-      url: "https://j105.org",
+      viewerUrl: "https://j105.org",
+      sourceUrl: "https://j105.org",
       tags: ["j105", "class", "rules", "rigging"],
       source: "J/105 Class Association"
     }
@@ -130,86 +154,122 @@ export const defaultState: AppState = {
       id: "spec-loa",
       section: "Dimensions",
       key: "LOA",
-      value: "34.50 ft (10.52 m)",
-      source: "J/Boats J/105"
+      value: "34.48 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-lwl",
       section: "Dimensions",
       key: "LWL",
-      value: "29.50 ft (8.99 m)",
-      source: "J/Boats J/105"
+      value: "29.75 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-beam",
       section: "Dimensions",
       key: "Beam",
-      value: "11.00 ft (3.35 m)",
-      source: "J/Boats J/105"
+      value: "11.00 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-draft",
       section: "Dimensions",
       key: "Draft",
-      value: "6.50 ft (1.98 m)",
-      source: "J/Boats J/105"
+      value: "6.5 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-disp",
       section: "Weight",
       key: "Displacement",
-      value: "7,750 lb (3,515 kg)",
-      source: "J/Boats J/105"
+      value: "7,760 lb",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-ballast",
       section: "Weight",
       key: "Ballast",
-      value: "3,400 lb (1,542 kg)",
-      source: "J/Boats J/105"
+      value: "3,440 lb",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-i",
       section: "Rigging",
       key: "I",
-      value: "44.50 ft (13.56 m)",
-      source: "J/Boats J/105"
+      value: "40.60 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-j",
       section: "Rigging",
       key: "J",
-      value: "13.20 ft (4.02 m)",
-      source: "J/Boats J/105"
+      value: "13.10 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-p",
       section: "Rigging",
       key: "P",
-      value: "39.50 ft (12.04 m)",
-      source: "J/Boats J/105"
+      value: "39.00 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-e",
       section: "Rigging",
       key: "E",
-      value: "13.50 ft (4.11 m)",
-      source: "J/Boats J/105"
+      value: "13.00 ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-main",
       section: "Sail Plan",
       key: "Mainsail area",
-      value: "282 sq ft (26.2 sq m)",
-      source: "J/Boats J/105"
+      value: "262 sq ft",
+      source: "J/Boats Tech Specs"
     },
     {
       id: "spec-jib",
       section: "Sail Plan",
       key: "100% Foretriangle",
-      value: "293 sq ft (27.2 sq m)",
-      source: "J/Boats J/105"
+      value: "266 sq ft",
+      source: "J/Boats Tech Specs"
+    },
+    {
+      id: "spec-isp",
+      section: "Rigging",
+      key: "ISP",
+      value: "44.38 ft",
+      source: "J/Boats Tech Specs"
+    },
+    {
+      id: "spec-spi",
+      section: "Sail Plan",
+      key: "Spinnaker area",
+      value: "955 sq ft",
+      source: "J/Boats Tech Specs"
+    },
+    {
+      id: "spec-phrf",
+      section: "Performance",
+      key: "PHRF",
+      value: "90",
+      source: "J/Boats Tech Specs"
+    },
+    {
+      id: "spec-sa-disp",
+      section: "Performance",
+      key: "SA/Disp",
+      value: "21.20",
+      source: "J/Boats Tech Specs"
+    },
+    {
+      id: "spec-disp-l",
+      section: "Performance",
+      key: "Disp/L",
+      value: "131",
+      source: "J/Boats Tech Specs"
     }
   ],
-  regattas: []
+  regattas: [],
+  boatWeights: []
 };

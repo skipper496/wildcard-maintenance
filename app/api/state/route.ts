@@ -29,11 +29,12 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json(
       {
-        error: "REDIS_UNAVAILABLE",
-        message: "Redis is not configured. Connect Upstash Redis in Vercel and redeploy.",
+        state: defaultState,
+        mode: "fallback",
+        warning: "Cloud store unavailable; serving local default state.",
         details: error instanceof Error ? error.message : "Unknown error"
       },
-      { status: 500 }
+      { status: 200 }
     );
   }
 }

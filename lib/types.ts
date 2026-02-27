@@ -40,7 +40,8 @@ export interface ManualItem {
   id: string;
   title: string;
   type: string;
-  url: string;
+  viewerUrl: string;
+  sourceUrl: string;
   tags: string[];
   source: string;
 }
@@ -65,7 +66,16 @@ export interface RegattaItem {
   date: string;
   location: string;
   notes: string;
+  websiteUrl: string;
+  registered: boolean;
   crew: CrewPerson[];
+}
+
+export interface BoatWeightEntry {
+  id: string;
+  date: string;
+  weightLb: number;
+  notes: string;
 }
 
 export interface AppState {
@@ -75,4 +85,5 @@ export interface AppState {
   manuals: ManualItem[];
   specs: SpecItem[];
   regattas: RegattaItem[];
+  boatWeights: BoatWeightEntry[];
 }

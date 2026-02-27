@@ -2,15 +2,16 @@ import { AppState } from "./types";
 
 export interface RemoteStateResponse {
   state: AppState;
+  mode?: string;
+  warning?: string;
 }
 
-export const fetchRemoteState = async (): Promise<AppState> => {
+export const fetchRemoteState = async (): Promise<RemoteStateResponse> => {
   const res = await fetch("/api/state", { method: "GET", cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to load state (${res.status})`);
   }
-  const data = (await res.json()) as RemoteStateResponse;
-  return data.state;
+  return (await res.json()) as RemoteStateResponse;
 };
 
 export const saveRemoteState = async (state: AppState): Promise<void> => {
