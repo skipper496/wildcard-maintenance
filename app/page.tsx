@@ -339,7 +339,7 @@ export default function Page() {
             <h2>Class and Club Links</h2>
             <div className="row">
               <a href="https://j105.org" target="_blank" rel="noreferrer"><button className="ghost">National J/105 Class</button></a>
-              <a href="https://j105sf.com" target="_blank" rel="noreferrer"><button className="ghost">SF Fleet 1</button></a>
+              <a href="https://sfj105.org" target="_blank" rel="noreferrer"><button className="ghost">SF Fleet 1</button></a>
               <a href="https://www.stfyc.com" target="_blank" rel="noreferrer"><button className="ghost">St. Francis YC</button></a>
             </div>
           </div>
