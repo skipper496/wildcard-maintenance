@@ -387,5 +387,6 @@ export const defaultState: AppState = {
     }
   ],
   regattas: [],
-  boatWeights: []
+  boatWeights: [],
+  prospects: []
 };

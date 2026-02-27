@@ -78,6 +78,15 @@ export interface BoatWeightEntry {
   notes: string;
 }
 
+export interface ProspectEntry {
+  id: string;
+  createdAt: string;
+  name: string;
+  email: string;
+  phone: string;
+  note: string;
+}
+
 export interface AppState {
   maintenanceLogs: MaintenanceLogEntry[];
   serviceIntervals: ServiceInterval[];
@@ -86,4 +95,5 @@ export interface AppState {
   specs: SpecItem[];
   regattas: RegattaItem[];
   boatWeights: BoatWeightEntry[];
+  prospects: ProspectEntry[];
 }

@@ -10,8 +10,8 @@ import { AppState, CrewStatus, RegattaItem, TodoCategory } from "@/lib/types";
 import { WeatherDay } from "@/lib/weather";
 import { addDays, todayIso, uid } from "@/lib/utils";
 
-type Tab = "Dashboard" | "Maintenance" | "To-Do" | "Manuals" | "Specs" | "Regattas";
-const tabs: Tab[] = ["Dashboard", "Maintenance", "To-Do", "Manuals", "Specs", "Regattas"];
+type Tab = "Dashboard" | "Maintenance" | "To-Do" | "Manuals" | "Specs" | "Regattas" | "Prospects";
+const tabs: Tab[] = ["Dashboard", "Maintenance", "To-Do", "Manuals", "Specs", "Regattas", "Prospects"];
 const categories: TodoCategory[] = ["Engine", "Sailing", "Electronics", "Hull and Fittings", "Safety", "Other"];
 const crewStatuses: CrewStatus[] = ["Confirmed", "Tentative", "Out"];
 const EDIT_PASSWORD = "496";
@@ -63,7 +63,8 @@ function normalizeState(raw: Partial<AppState> | null | undefined): AppState {
       registered: Boolean(r.registered),
       crew: r.crew ?? []
     }))),
-    boatWeights: base.boatWeights ?? []
+    boatWeights: base.boatWeights ?? [],
+    prospects: base.prospects ?? []
   };
 }
 
@@ -114,7 +115,12 @@ export default function Page() {
   const [authError, setAuthError] = useState("");
   const [manualQuery, setManualQuery] = useState("");
   const [selectedManual, setSelectedManual] = useState("");
-  const restrictedTabs: Tab[] = ["Maintenance", "To-Do"];
+  const [prospectName, setProspectName] = useState("");
+  const [prospectEmail, setProspectEmail] = useState("");
+  const [prospectPhone, setProspectPhone] = useState("");
+  const [prospectNote, setProspectNote] = useState("");
+  const [prospectSubmitted, setProspectSubmitted] = useState(false);
+  const restrictedTabs: Tab[] = ["Maintenance", "To-Do", "Prospects"];
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? window.sessionStorage.getItem("wm-editor") : null;
@@ -344,6 +350,48 @@ export default function Page() {
             </div>
           </div>
           <div className="panel" style={{ gridColumn: "1 / -1" }}>
+            <h2>I'm interested!</h2>
+            <p className="muted">Prospective crew can leave contact info and a short note.</p>
+            {prospectSubmitted && <div className="chip upcoming">Thanks. Your info has been submitted.</div>}
+            <div className="grid two-col">
+              <div className="stack">
+                <div><label>Name</label><input value={prospectName} onChange={(e) => setProspectName(e.target.value)} /></div>
+                <div><label>Email</label><input value={prospectEmail} onChange={(e) => setProspectEmail(e.target.value)} /></div>
+                <div><label>Phone</label><input value={prospectPhone} onChange={(e) => setProspectPhone(e.target.value)} /></div>
+              </div>
+              <div className="stack">
+                <div><label>Quick note</label><textarea value={prospectNote} onChange={(e) => setProspectNote(e.target.value)} /></div>
+                <button
+                  onClick={() => {
+                    if (!prospectName.trim() || !prospectEmail.trim()) return;
+                    setState({
+                      ...state,
+                      prospects: [
+                        {
+                          id: uid(),
+                          createdAt: new Date().toISOString(),
+                          name: prospectName.trim(),
+                          email: prospectEmail.trim(),
+                          phone: prospectPhone.trim(),
+                          note: prospectNote.trim()
+                        },
+                        ...state.prospects
+                      ]
+                    });
+                    setProspectName("");
+                    setProspectEmail("");
+                    setProspectPhone("");
+                    setProspectNote("");
+                    setProspectSubmitted(true);
+                    setTimeout(() => setProspectSubmitted(false), 3000);
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="panel" style={{ gridColumn: "1 / -1" }}>
             <div className="row" style={{ justifyContent: "space-between" }}>
               <h2 style={{ margin: 0 }}>1-Week Weather Snapshot (Pier 39)</h2>
               <Link href="/sources" className="muted">Sources</Link>
@@ -526,6 +574,38 @@ export default function Page() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {tab === "Prospects" && (
+        <section className="panel">
+          <h2>Prospective Crew</h2>
+          <p className="muted">Submitted from the public dashboard interest form.</p>
+          <div className="list">
+            {state.prospects.length === 0 && <div className="muted">No prospect submissions yet.</div>}
+            {state.prospects.map((p) => (
+              <div key={p.id} className="item">
+                <h4>{p.name}</h4>
+                <p>Email: {p.email}</p>
+                <p>Phone: {p.phone || "n/a"}</p>
+                <p>{p.note || "No note provided."}</p>
+                <p className="muted">Submitted: {new Date(p.createdAt).toLocaleString()}</p>
+                <button
+                  className="secondary"
+                  onClick={() =>
+                    guardedSetState(() =>
+                      setState({
+                        ...state,
+                        prospects: state.prospects.filter((x) => x.id !== p.id)
+                      })
+                    )
+                  }
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
           </div>
         </section>
       )}
