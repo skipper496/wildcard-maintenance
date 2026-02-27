@@ -296,7 +296,7 @@ button.ghost {
   width: 96px;
   height: 56px;
   object-fit: contain;
-  object-position: center 88%;
+  object-position: center 116%;
   padding: 0;
 }
 
@@ -304,8 +304,8 @@ button.ghost {
   background: transparent;
   border: 0;
   padding: 0;
-  width: 88px;
-  height: 56px;
+  width: 114px;
+  height: 73px;
   object-fit: contain;
 }
 

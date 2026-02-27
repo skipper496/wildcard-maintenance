@@ -15,8 +15,6 @@ const tabs: Tab[] = ["Dashboard", "Maintenance", "To-Do", "Manuals", "Specs", "R
 const categories: TodoCategory[] = ["Engine", "Sailing", "Electronics", "Hull and Fittings", "Safety", "Other"];
 const crewStatuses: CrewStatus[] = ["Confirmed", "Tentative", "Out"];
 const EDIT_PASSWORD = "496";
-const GCAL_EMBED_URL =
-  "https://calendar.google.com/calendar/embed?src=c_b566d799a34429a336cbc1f9276c71d41c9b69f4ab5d6826dbbc2f2b65756985%40group.calendar.google.com&ctz=America%2FLos_Angeles";
 
 type CalendarEvent = { label: string; kind: "regatta" | "service" | "todo" };
 
@@ -304,13 +302,13 @@ export default function Page() {
             <div className="list">
               {regattasSoon.length === 0 && <div className="muted">No regattas scheduled.</div>}
               {regattasSoon.map((r) => {
-                const confirmed = r.crew.filter((c) => c.status === "Confirmed").length + 1;
+                const confirmed = r.crew.filter((c) => c.status === "Confirmed").length;
                 return (
                   <div className="item" key={r.id}>
                     <h4>{r.name} ({r.date})</h4>
                     <p>{r.location}</p>
                     <div className="row">
-                      <span className={`chip ${confirmed >= 6 ? "upcoming" : "due"}`}>Crew incl. you: {confirmed}/6</span>
+                      <span className={`chip ${confirmed >= 6 ? "upcoming" : "due"}`}>Confirmed crew: {confirmed}/6</span>
                       {r.registered ? <span className="chip upcoming">Registered</span> : <span className="chip due">Not registered</span>}
                     </div>
                   </div>
@@ -515,18 +513,6 @@ export default function Page() {
             </div>
           </div>
           <div className="panel">
-            <h2>Wildcard Google Calendar Feed</h2>
-            <div className="calendar-embed-wrap">
-              <iframe
-                src={GCAL_EMBED_URL}
-                style={{ border: 0 }}
-                width="100%"
-                height="560"
-                frameBorder="0"
-                scrolling="no"
-                title="Wildcard Google Calendar"
-              />
-            </div>
             <div className="row">
               <h2 style={{ margin: 0 }}>{title}</h2>
               <button className="ghost" onClick={() => { const d = new Date(anchor); d.setMonth(d.getMonth() - 1); setAnchor(d.toISOString().slice(0, 10)); }}>Previous</button>
@@ -673,11 +659,66 @@ function RegattaCard({ regatta, state, setState, guardedSetState }: { regatta: R
       <div className="list">
         {flags.map((f, i) => <div key={i} className="chip overdue">{f}</div>)}
       </div>
+      <div className="list">
+        {regatta.crew.map((c) => (
+          <div key={c.id} className="row item">
+            <input
+              value={c.name}
+              onChange={(e) =>
+                guardedSetState(() =>
+                  setState({
+                    ...state,
+                    regattas: state.regattas.map((r) =>
+                      r.id === regatta.id
+                        ? { ...r, crew: r.crew.map((x) => (x.id === c.id ? { ...x, name: e.target.value } : x)) }
+                        : r
+                    )
+                  })
+                )
+              }
+              style={{ maxWidth: "220px" }}
+            />
+            <select
+              value={c.status}
+              onChange={(e) =>
+                guardedSetState(() =>
+                  setState({
+                    ...state,
+                    regattas: state.regattas.map((r) =>
+                      r.id === regatta.id
+                        ? {
+                            ...r,
+                            crew: r.crew.map((x) =>
+                              x.id === c.id ? { ...x, status: e.target.value as CrewStatus } : x
+                            )
+                          }
+                        : r
+                    )
+                  })
+                )
+              }
+            >
+              {crewStatuses.map((s) => <option key={s}>{s}</option>)}
+            </select>
+            <button
+              className="secondary"
+              onClick={() =>
+                guardedSetState(() =>
+                  setState({
+                    ...state,
+                    regattas: state.regattas.map((r) =>
+                      r.id === regatta.id ? { ...r, crew: r.crew.filter((x) => x.id !== c.id) } : r
+                    )
+                  })
+                )
+              }
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
       <div className="row">
-        <button onClick={() => {
-          if (regatta.crew.some((c) => c.name === "Owner (Me)")) return;
-          setState({ ...state, regattas: state.regattas.map((r) => r.id === regatta.id ? { ...r, crew: [...r.crew, { id: uid(), name: "Owner (Me)", status: "Confirmed" }] } : r) });
-        }}>Add Me (Confirmed)</button>
         <input placeholder="Crew name" value={crewName} onChange={(e) => setCrewName(e.target.value)} />
         <select value={crewStatus} onChange={(e) => setCrewStatus(e.target.value as CrewStatus)}>{crewStatuses.map((s) => <option key={s}>{s}</option>)}</select>
         <button onClick={() => guardedSetState(() => {
