@@ -10,11 +10,13 @@ import { AppState, CrewStatus, RegattaItem, TodoCategory } from "@/lib/types";
 import { WeatherDay } from "@/lib/weather";
 import { addDays, todayIso, uid } from "@/lib/utils";
 
-type Tab = "Dashboard" | "Maintenance" | "Service" | "To-Do" | "Manuals" | "Specs" | "Regattas";
-const tabs: Tab[] = ["Dashboard", "Maintenance", "Service", "To-Do", "Manuals", "Specs", "Regattas"];
+type Tab = "Dashboard" | "Maintenance" | "To-Do" | "Manuals" | "Specs" | "Regattas";
+const tabs: Tab[] = ["Dashboard", "Maintenance", "To-Do", "Manuals", "Specs", "Regattas"];
 const categories: TodoCategory[] = ["Engine", "Sailing", "Electronics", "Hull and Fittings", "Safety", "Other"];
 const crewStatuses: CrewStatus[] = ["Confirmed", "Tentative", "Out"];
 const EDIT_PASSWORD = "496";
+const GCAL_EMBED_URL =
+  "https://calendar.google.com/calendar/embed?src=c_b566d799a34429a336cbc1f9276c71d41c9b69f4ab5d6826dbbc2f2b65756985%40group.calendar.google.com&ctz=America%2FLos_Angeles";
 
 type CalendarEvent = { label: string; kind: "regatta" | "service" | "todo" };
 
@@ -114,7 +116,7 @@ export default function Page() {
   const [authError, setAuthError] = useState("");
   const [manualQuery, setManualQuery] = useState("");
   const [selectedManual, setSelectedManual] = useState("");
-  const restrictedTabs: Tab[] = ["Maintenance", "Service", "To-Do"];
+  const restrictedTabs: Tab[] = ["Maintenance", "To-Do"];
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? window.sessionStorage.getItem("wm-editor") : null;
@@ -375,26 +377,22 @@ export default function Page() {
       {tab === "Maintenance" && (
         <section className="grid two-col">
           <SimpleLogPanel state={state} setState={setState} guardedSetState={guardedSetState} />
-        </section>
-      )}
-
-      {tab === "Service" && (
-        <section className="panel">
-          <h2>Service Timelines</h2>
-          <div className="row">
-            <a href="https://www.dieselpartsdirect.com" target="_blank" rel="noreferrer">
-              <button className="ghost">Diesel Parts Direct</button>
-            </a>
-          </div>
-          {!isEditor && <div className="chip due">Read-only mode.</div>}
-          <div className="list">
-            {statuses.map((s) => (
-              <div key={s.interval.id} className="item">
-                <div className={`chip ${s.status}`}>{s.status.toUpperCase()}</div>
-                <h4>{s.interval.system}: {s.interval.task}</h4>
-                <p className="muted">{s.message || "No schedule details."}</p>
-              </div>
-            ))}
+          <div className="panel">
+            <h2>Service Timelines</h2>
+            <div className="row">
+              <a href="https://www.dieselpartsdirect.com" target="_blank" rel="noreferrer">
+                <button className="ghost">Diesel Parts Direct</button>
+              </a>
+            </div>
+            <div className="list">
+              {statuses.map((s) => (
+                <div key={s.interval.id} className="item">
+                  <div className={`chip ${s.status}`}>{s.status.toUpperCase()}</div>
+                  <h4>{s.interval.system}: {s.interval.task}</h4>
+                  <p className="muted">{s.message || "No schedule details."}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -410,9 +408,41 @@ export default function Page() {
                   <strong>{t.title}</strong>
                   <p>{t.category} | Due: {t.dueDate ?? "n/a"}</p>
                   <p>{t.notes}</p>
-                  <button onClick={() => guardedSetState(() => setState({ ...state, todos: state.todos.map((x) => x.id === t.id ? { ...x, done: !x.done } : x) }))}>
-                    {t.done ? "Mark Open" : "Mark Done"}
-                  </button>
+                  <div className="row">
+                    <button onClick={() => guardedSetState(() => setState({ ...state, todos: state.todos.map((x) => x.id === t.id ? { ...x, done: !x.done } : x) }))}>
+                      {t.done ? "Mark Open" : "Mark Done"}
+                    </button>
+                    <button
+                      className="secondary"
+                      onClick={() =>
+                        guardedSetState(() => {
+                          const title = window.prompt("Edit title", t.title);
+                          if (title === null) return;
+                          const notes = window.prompt("Edit notes", t.notes);
+                          if (notes === null) return;
+                          setState({
+                            ...state,
+                            todos: state.todos.map((x) => (x.id === t.id ? { ...x, title, notes } : x))
+                          });
+                        })
+                      }
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="secondary"
+                      onClick={() =>
+                        guardedSetState(() =>
+                          setState({
+                            ...state,
+                            todos: state.todos.filter((x) => x.id !== t.id)
+                          })
+                        )
+                      }
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -485,6 +515,18 @@ export default function Page() {
             </div>
           </div>
           <div className="panel">
+            <h2>Wildcard Google Calendar Feed</h2>
+            <div className="calendar-embed-wrap">
+              <iframe
+                src={GCAL_EMBED_URL}
+                style={{ border: 0 }}
+                width="100%"
+                height="560"
+                frameBorder="0"
+                scrolling="no"
+                title="Wildcard Google Calendar"
+              />
+            </div>
             <div className="row">
               <h2 style={{ margin: 0 }}>{title}</h2>
               <button className="ghost" onClick={() => { const d = new Date(anchor); d.setMonth(d.getMonth() - 1); setAnchor(d.toISOString().slice(0, 10)); }}>Previous</button>

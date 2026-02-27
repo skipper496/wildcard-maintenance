@@ -379,3 +379,11 @@ button.ghost {
   border-top: 1px dashed var(--line);
   padding-top: 0.5rem;
 }
+
+.calendar-embed-wrap {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  margin-bottom: 0.75rem;
+}
