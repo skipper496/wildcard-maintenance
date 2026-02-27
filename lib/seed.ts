@@ -89,6 +89,150 @@ export const defaultState: AppState = {
       notes: "",
       dueDate: null,
       done: false
+    },
+    {
+      id: "todo-main-trimmer-footrest",
+      category: "Sailing",
+      title: "Footrest for main trimmer",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-cg-wood-plate",
+      category: "Hull and Fittings",
+      title: "Carve CG wood plate inside (get dimensions first)",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-busbar-running-lights",
+      category: "Electronics",
+      title: "Install new bus bar and wire running lights",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-grind-mainsheet-bolt",
+      category: "Hull and Fittings",
+      title: "Grind bolt on mainsheet",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-seal-port-handlebar",
+      category: "Hull and Fittings",
+      title: "Seal interior port handlebar rail",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-steaming-light-install",
+      category: "Electronics",
+      title: "Steaming light install",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-change-sail-number",
+      category: "Sailing",
+      title: "Change sail number (test kite)",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-clean-interior-vacuum",
+      category: "Hull and Fittings",
+      title: "Clean interior and vacuum",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-back-hatch-milk-crate",
+      category: "Hull and Fittings",
+      title: "Milk crate and shock cord for back hatch",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-impeller-fix",
+      category: "Engine",
+      title: "Impeller fix",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-winch-maintenance",
+      category: "Sailing",
+      title: "Winch maintenance",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-wood-panels-aft-floor",
+      category: "Hull and Fittings",
+      title: "Wood panels for aft floor near motor cover",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-wheel-leather",
+      category: "Sailing",
+      title: "Buy new wheel leather",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-clean-starboard-drawer",
+      category: "Hull and Fittings",
+      title: "Clean starboard under-sink drawer",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-fix-gelcoat-docking",
+      category: "Hull and Fittings",
+      title: "Fix gelcoat from docking crash",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-replace-throttle-cables",
+      category: "Engine",
+      title: "Replace idle and throttle cables",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-panel-glass",
+      category: "Engine",
+      title: "Engine instrument panel glass (13.25 x 10 in)",
+      notes: "",
+      dueDate: null,
+      done: false
+    },
+    {
+      id: "todo-stanchions",
+      category: "Hull and Fittings",
+      title: "Replace or fix stripped stanchions",
+      notes: "",
+      dueDate: null,
+      done: false
     }
   ],
   manuals: [

@@ -288,6 +288,12 @@ button.ghost {
   border: 1px solid #b8ccd8;
 }
 
+.brand-mark.whiteify {
+  filter: brightness(0) invert(1);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
 .table-wrap {
   overflow-x: auto;
 }

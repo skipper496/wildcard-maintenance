@@ -28,10 +28,14 @@ function normalizeState(raw: Partial<AppState> | null | undefined): AppState {
       viewerUrl: m.viewerUrl ?? m.url ?? "",
       sourceUrl: m.sourceUrl ?? m.url ?? m.viewerUrl ?? ""
     }));
+  const todoById = new Map((base.todos ?? []).map((t: any) => [t.id, t]));
+  for (const seedTodo of defaultState.todos) {
+    if (!todoById.has(seedTodo.id)) todoById.set(seedTodo.id, seedTodo);
+  }
   return {
     maintenanceLogs: base.maintenanceLogs ?? defaultState.maintenanceLogs,
     serviceIntervals: base.serviceIntervals ?? defaultState.serviceIntervals,
-    todos: base.todos ?? defaultState.todos,
+    todos: Array.from(todoById.values()),
     manuals: persistedManuals.length === defaultState.manuals.length ? persistedManuals : defaultState.manuals,
     specs: base.specs ?? defaultState.specs,
     regattas: (base.regattas ?? defaultState.regattas).map((r: any) => ({
@@ -91,11 +95,16 @@ export default function Page() {
   const [authError, setAuthError] = useState("");
   const [manualQuery, setManualQuery] = useState("");
   const [selectedManual, setSelectedManual] = useState("");
+  const restrictedTabs: Tab[] = ["Maintenance", "Service", "To-Do"];
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? window.sessionStorage.getItem("wm-editor") : null;
     setIsEditor(token === "1");
   }, []);
+
+  useEffect(() => {
+    if (!isEditor && restrictedTabs.includes(tab)) setTab("Dashboard");
+  }, [isEditor, tab]);
 
   useEffect(() => {
     let active = true;
@@ -199,6 +208,7 @@ export default function Page() {
     [m.title, m.type, m.source, m.tags.join(" ")].join(" ").toLowerCase().includes(manualQuery.toLowerCase())
   );
   const currentManual = manualsFiltered.find((m) => m.id === selectedManual) ?? manualsFiltered[0];
+  const visibleTabs = tabs.filter((t) => isEditor || !restrictedTabs.includes(t));
 
   const guardedSetState = (updater: () => void) => {
     if (!isEditor) {
@@ -216,8 +226,8 @@ export default function Page() {
             <h1>Wildcard J/105 #496</h1>
           </div>
           <div className="row">
-            <img className="brand-mark" src="/assets/j105-logo.png" alt="J/105 logo" />
-            <img className="brand-mark" src="/assets/stfyc-burgee.svg" alt="StFYC burgee" />
+            <img className="brand-mark whiteify" src="/assets/j105-logo-color.png" alt="J/105 logo" />
+            <img className="brand-mark" src="/assets/stfyc-burgee.png" alt="StFYC burgee" />
             <button
               className={isEditor ? "secondary" : ""}
               onClick={() => {
@@ -264,7 +274,7 @@ export default function Page() {
       </section>
 
       <div className="tabs">
-        {tabs.map((t) => <button key={t} className={`tab-btn ${tab === t ? "active" : ""}`} onClick={() => setTab(t)}>{t}</button>)}
+        {visibleTabs.map((t) => <button key={t} className={`tab-btn ${tab === t ? "active" : ""}`} onClick={() => setTab(t)}>{t}</button>)}
       </div>
 
       {tab === "Dashboard" && (
@@ -290,18 +300,23 @@ export default function Page() {
           </div>
           <div className="panel">
             <h2>Maintenance Due for Racing</h2>
-            <p className="muted">Within 1 month, before race, or already due/overdue.</p>
-            <div className="list">
-              {maintenanceRacing.length === 0 && <div className="chip upcoming">No immediate service risks.</div>}
-              {maintenanceRacing.map((s) => (
-                <div key={s.interval.id} className="item">
-                  <div className={`chip ${s.status}`}>{s.status.toUpperCase()}</div>
-                  <h4>{s.interval.task}</h4>
-                  <p className="muted">{s.message || "Check timeline."}</p>
+            {!isEditor && <div className="chip due">Login required to view maintenance/service details.</div>}
+            {isEditor && (
+              <>
+                <p className="muted">Within 1 month, before race, or already due/overdue.</p>
+                <div className="list">
+                  {maintenanceRacing.length === 0 && <div className="chip upcoming">No immediate service risks.</div>}
+                  {maintenanceRacing.map((s) => (
+                    <div key={s.interval.id} className="item">
+                      <div className={`chip ${s.status}`}>{s.status.toUpperCase()}</div>
+                      <h4>{s.interval.task}</h4>
+                      <p className="muted">{s.message || "Check timeline."}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div className="item"><strong>Current engine hours:</strong> {latestHours ?? "Not set"}</div>
+                <div className="item"><strong>Current engine hours:</strong> {latestHours ?? "Not set"}</div>
+              </>
+            )}
           </div>
           <div className="panel" style={{ gridColumn: "1 / -1" }}>
             <h2>Class and Club Links</h2>
@@ -420,7 +435,9 @@ export default function Page() {
       {tab === "Specs" && (
         <section className="panel">
           <h2>J/105 Specifications</h2>
-          <img className="rigging-large" src="/assets/j105-running-rigging.jpg" alt="J/105 running rigging" />
+          <div className="pdf-wrap" style={{ minHeight: "760px" }}>
+            <iframe src="/assets/j105info.pdf" title="J/105 info" style={{ height: "760px" }} />
+          </div>
           <div className="spec-grid">
             {state.specs.map((s) => (
               <div key={s.id} className="spec-card">
