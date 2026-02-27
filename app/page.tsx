@@ -20,15 +20,19 @@ type CalendarEvent = { label: string; kind: "regatta" | "service" | "todo" };
 
 function normalizeState(raw: Partial<AppState> | null | undefined): AppState {
   const base = raw ?? {};
+  const manualIds = new Set(defaultState.manuals.map((m) => m.id));
+  const persistedManuals = (base.manuals ?? [])
+    .filter((m: any) => manualIds.has(m.id))
+    .map((m: any) => ({
+      ...m,
+      viewerUrl: m.viewerUrl ?? m.url ?? "",
+      sourceUrl: m.sourceUrl ?? m.url ?? m.viewerUrl ?? ""
+    }));
   return {
     maintenanceLogs: base.maintenanceLogs ?? defaultState.maintenanceLogs,
     serviceIntervals: base.serviceIntervals ?? defaultState.serviceIntervals,
     todos: base.todos ?? defaultState.todos,
-    manuals: (base.manuals ?? defaultState.manuals).map((m: any) => ({
-      ...m,
-      viewerUrl: m.viewerUrl ?? m.url ?? "",
-      sourceUrl: m.sourceUrl ?? m.url ?? m.viewerUrl ?? ""
-    })),
+    manuals: persistedManuals.length === defaultState.manuals.length ? persistedManuals : defaultState.manuals,
     specs: base.specs ?? defaultState.specs,
     regattas: (base.regattas ?? defaultState.regattas).map((r: any) => ({
       ...r,
@@ -209,22 +213,25 @@ export default function Page() {
       <div className="top">
         <div className="top-row">
           <div>
-            <h1>Wildcard Maintenance</h1>
-            <p>Racing readiness for Wildcard (J/105)</p>
+            <h1>Wildcard J/105 #496</h1>
           </div>
-          <button
-            className={isEditor ? "secondary" : ""}
-            onClick={() => {
-              if (isEditor) {
-                window.sessionStorage.removeItem("wm-editor");
-                setIsEditor(false);
-              } else {
-                setShowLogin((v) => !v);
-              }
-            }}
-          >
-            {isEditor ? "Log Out" : "Login"}
-          </button>
+          <div className="row">
+            <img className="brand-mark" src="/assets/j105-logo.png" alt="J/105 logo" />
+            <img className="brand-mark" src="/assets/stfyc-burgee.svg" alt="StFYC burgee" />
+            <button
+              className={isEditor ? "secondary" : ""}
+              onClick={() => {
+                if (isEditor) {
+                  window.sessionStorage.removeItem("wm-editor");
+                  setIsEditor(false);
+                } else {
+                  setShowLogin((v) => !v);
+                }
+              }}
+            >
+              {isEditor ? "Log Out" : "Login"}
+            </button>
+          </div>
         </div>
         {showLogin && !isEditor && (
           <div className="login-box">
@@ -297,6 +304,14 @@ export default function Page() {
             <div className="item"><strong>Current engine hours:</strong> {latestHours ?? "Not set"}</div>
           </div>
           <div className="panel" style={{ gridColumn: "1 / -1" }}>
+            <h2>Class and Club Links</h2>
+            <div className="row">
+              <a href="https://j105.org" target="_blank" rel="noreferrer"><button className="ghost">National J/105 Class</button></a>
+              <a href="https://j105sf.com" target="_blank" rel="noreferrer"><button className="ghost">SF Fleet 1</button></a>
+              <a href="https://www.stfyc.com" target="_blank" rel="noreferrer"><button className="ghost">St. Francis YC</button></a>
+            </div>
+          </div>
+          <div className="panel" style={{ gridColumn: "1 / -1" }}>
             <div className="row" style={{ justifyContent: "space-between" }}>
               <h2 style={{ margin: 0 }}>1-Week Weather Snapshot (Pier 39)</h2>
               <Link href="/sources" className="muted">Sources</Link>
@@ -333,6 +348,11 @@ export default function Page() {
       {tab === "Service" && (
         <section className="panel">
           <h2>Service Timelines</h2>
+          <div className="row">
+            <a href="https://www.dieselpartsdirect.com" target="_blank" rel="noreferrer">
+              <button className="ghost">Diesel Parts Direct</button>
+            </a>
+          </div>
           {!isEditor && <div className="chip due">Read-only mode.</div>}
           <div className="list">
             {statuses.map((s) => (
@@ -372,53 +392,49 @@ export default function Page() {
       )}
 
       {tab === "Manuals" && (
-        <section className="grid two-col">
-          <div className="panel">
+        <section className="panel">
+          <div className="row" style={{ justifyContent: "space-between" }}>
             <h2>Manual Viewer</h2>
+            <a href="https://www.dieselpartsdirect.com" target="_blank" rel="noreferrer">
+              <button className="ghost">Diesel Parts Direct</button>
+            </a>
+          </div>
+          <div className="row">
             <input placeholder="Search manuals..." value={manualQuery} onChange={(e) => setManualQuery(e.target.value)} />
-            <div className="row" style={{ marginTop: "0.5rem" }}>
-              {manualsFiltered.map((m) => (
-                <button key={m.id} className="ghost" onClick={() => setSelectedManual(m.id)}>{m.title}</button>
-              ))}
-            </div>
-            {currentManual && (
-              <div className="item" style={{ marginTop: "0.75rem" }}>
-                <h3>{currentManual.title}</h3>
-                <div className="pdf-wrap"><iframe src={currentManual.viewerUrl} title={currentManual.title} /></div>
-                <p className="muted">Citation: <a href={currentManual.sourceUrl} target="_blank" rel="noreferrer">{currentManual.sourceUrl}</a></p>
-              </div>
-            )}
           </div>
-          <div className="panel">
-            <h2>Manual Links</h2>
-            <div className="list">
-              {state.manuals.map((m) => (
-                <div key={m.id} className="item">
-                  <h4>{m.title}</h4>
-                  <p>{m.type} | {m.source}</p>
-                  <a href={m.sourceUrl} target="_blank" rel="noreferrer">Open source link</a>
-                </div>
-              ))}
-            </div>
+          <div className="row" style={{ marginTop: "0.5rem" }}>
+            {manualsFiltered.map((m) => (
+              <button key={m.id} className="ghost" onClick={() => setSelectedManual(m.id)}>{m.title}</button>
+            ))}
           </div>
+          {currentManual && (
+            <div className="item" style={{ marginTop: "0.75rem" }}>
+              <h3>{currentManual.title}</h3>
+              <div className="pdf-wrap fullscreen"><iframe src={currentManual.viewerUrl} title={currentManual.title} /></div>
+              <p className="muted">Citation: <a href={currentManual.sourceUrl} target="_blank" rel="noreferrer">{currentManual.sourceUrl}</a></p>
+            </div>
+          )}
         </section>
       )}
 
       {tab === "Specs" && (
-        <section className="grid two-col">
-          <div className="panel">
-            <h2>J/105 Specs</h2>
-            <div className="pdf-wrap"><iframe src="https://j105.org/wp-content/uploads/2016/01/j105info.pdf" title="J105 info pdf" /></div>
-            <div className="list" style={{ marginTop: "0.7rem" }}>
-              {state.specs.map((s) => (
-                <div key={s.id} className="item"><strong>{s.section} - {s.key}</strong>: {s.value}<div className="muted">{s.source}</div></div>
-              ))}
-            </div>
+        <section className="panel">
+          <h2>J/105 Specifications</h2>
+          <img className="rigging-large" src="/assets/j105-running-rigging.jpg" alt="J/105 running rigging" />
+          <div className="spec-grid">
+            {state.specs.map((s) => (
+              <div key={s.id} className="spec-card">
+                <div className="spec-sec">{s.section}</div>
+                <div className="spec-key">{s.key}</div>
+                <div className="spec-val">{s.value}</div>
+                <div className="spec-src">{s.source}</div>
+              </div>
+            ))}
           </div>
-          <div className="panel">
-            <h2>Boat Weight Log</h2>
+          <details className="weight-lite">
+            <summary>Boat weight log</summary>
             <WeightComposer state={state} setState={setState} guardedSetState={guardedSetState} />
-          </div>
+          </details>
         </section>
       )}
 

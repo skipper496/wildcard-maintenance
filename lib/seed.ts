@@ -93,60 +93,32 @@ export const defaultState: AppState = {
   ],
   manuals: [
     {
-      id: "man-ygm20f-owner",
-      title: "Yanmar YGM20F Owner's Manual (GM Series)",
+      id: "man-operation",
+      title: "Yanmar Operation Manual",
       type: "Owner's manual",
-      viewerUrl:
-        "https://www.yanmar.no/wp-content/uploads/2019/10/0AGMS-G00100_1GM10_2GM20_3GM30_Operation_Manual.pdf",
-      sourceUrl:
-        "https://www.yanmar.no/wp-content/uploads/2019/10/0AGMS-G00100_1GM10_2GM20_3GM30_Operation_Manual.pdf",
-      tags: ["yanmar", "ygm20f", "owner", "operation"],
-      source: "Yanmar official document mirror"
+      viewerUrl: "/manuals/yanmar-operation-manual.pdf",
+      sourceUrl: "https://j109.org/docs/Yanmar_3GM30F3.pdf",
+      tags: ["yanmar", "operation", "manual"],
+      source: "Hosted local copy"
     },
     {
-      id: "man-ygm20f-service",
-      title: "Yanmar GM Service Manual (includes 2GM20 family)",
+      id: "man-service",
+      title: "Yanmar Workshop Service Manual",
       type: "Service manual",
-      viewerUrl: "https://www.yumpu.com/da/embed/view/sPPNEAH7ak1Gke7p",
-      sourceUrl: "https://www.yumpu.com/en/document/view/32590325/yanmar-gm-series-service-manual",
-      tags: ["yanmar", "ygm20f", "service", "workshop"],
-      source: "Yumpu document archive"
+      viewerUrl: "/manuals/yanmar-workshop-manual.pdf",
+      sourceUrl:
+        "https://nhmr.nl/wp-content/uploads/2022/03/YANMAR-WORKSHOP-MANUAL-1GM10-2GM30-3GM30-3HM35.pdf",
+      tags: ["yanmar", "service", "workshop"],
+      source: "Hosted local copy"
     },
     {
-      id: "man-yanmar-marine-support",
-      title: "Yanmar Marine Support",
-      type: "Official support",
-      viewerUrl: "https://www.yanmar.com/marine/support/",
-      sourceUrl: "https://www.yanmar.com/marine/support/",
-      tags: ["yanmar", "support", "parts", "dealer"],
-      source: "Yanmar Marine"
-    },
-    {
-      id: "man-yanmar-operation-manuals",
-      title: "Yanmar Marine Operation Manuals",
-      type: "Official manuals portal",
-      viewerUrl: "https://www.yanmar.com/marine/support/operation_manuals/",
-      sourceUrl: "https://www.yanmar.com/marine/support/operation_manuals/",
-      tags: ["yanmar", "operation manual", "engine"],
-      source: "Yanmar Marine"
-    },
-    {
-      id: "man-yanmar-dealer-locator",
-      title: "Yanmar Dealer Locator",
-      type: "Official dealer network",
-      viewerUrl: "https://www.yanmar.com/marine/support/dealer_locator/",
-      sourceUrl: "https://www.yanmar.com/marine/support/dealer_locator/",
-      tags: ["yanmar", "dealer", "service manual request"],
-      source: "Yanmar Marine"
-    },
-    {
-      id: "man-j105-class-rules",
-      title: "J/105 Class Rules and Documents",
-      type: "Class documentation",
-      viewerUrl: "https://j105.org",
-      sourceUrl: "https://j105.org",
-      tags: ["j105", "class", "rules", "rigging"],
-      source: "J/105 Class Association"
+      id: "man-parts",
+      title: "Yanmar Parts Catalog (2GM20)",
+      type: "Parts catalog",
+      viewerUrl: "/manuals/yanmar-parts-catalog.pdf",
+      sourceUrl: "https://j30.us/files/Yanmar-2GM20-Parts-List.pdf",
+      tags: ["yanmar", "parts", "catalog"],
+      source: "Hosted local copy"
     }
   ],
   specs: [

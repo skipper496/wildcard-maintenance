@@ -55,7 +55,7 @@ a {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .login-box {
@@ -271,6 +271,23 @@ button.ghost {
   border: 0;
 }
 
+.pdf-wrap.fullscreen {
+  min-height: calc(100vh - 230px);
+}
+
+.pdf-wrap.fullscreen iframe {
+  height: calc(100vh - 230px);
+}
+
+.brand-mark {
+  height: 42px;
+  width: auto;
+  background: white;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #b8ccd8;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -287,4 +304,57 @@ button.ghost {
   padding: 0.45rem 0.4rem;
   white-space: nowrap;
   font-size: 0.9rem;
+}
+
+.rigging-large {
+  width: 100%;
+  max-height: 680px;
+  object-fit: contain;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+}
+
+.spec-card {
+  border: 1px solid #b9ced9;
+  border-radius: 12px;
+  padding: 0.7rem;
+  background: linear-gradient(160deg, #f8fcff, #eef5fb);
+}
+
+.spec-sec {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #4d6270;
+}
+
+.spec-key {
+  font-weight: 700;
+  margin-top: 0.1rem;
+}
+
+.spec-val {
+  font-size: 1rem;
+  margin-top: 0.15rem;
+}
+
+.spec-src {
+  font-size: 0.78rem;
+  color: #5f7482;
+  margin-top: 0.3rem;
+}
+
+.weight-lite {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 0.5rem;
 }
