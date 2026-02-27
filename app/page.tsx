@@ -227,7 +227,7 @@ export default function Page() {
           </div>
           <div className="row">
             <img className="brand-mark whiteify" src="/assets/j105-logo-color.png" alt="J/105 logo" />
-            <img className="brand-mark" src="/assets/stfyc-burgee.png" alt="StFYC burgee" />
+            <img className="brand-mark burgee-mark" src="/assets/stfyc-burgee.png" alt="StFYC burgee" />
             <button
               className={isEditor ? "secondary" : ""}
               onClick={() => {
